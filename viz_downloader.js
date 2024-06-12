@@ -1,7 +1,18 @@
+/*
+PREREQUISITES
+1. open chrome://settings/downloads
+   - set download location
+   - disable "ask where to save each file before downloading"
+2. add extn to overwrite preexisting file instead of adding unwanted suffix to filename
+   - https://chromewebstore.google.com/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp
 
-// PREREQUISITES
-// 1. open chrome://settings/downloads, set location and turn off prompting
-// 2. add extn https://chromewebstore.google.com/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp
+USAGE
+1. load the viz chapter and open developer console
+2. Run the following
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader/viz_downloader.js").then(function(module) {
+       downloadChapter()()
+   })
+*/
 
 let addFuncToProcessChain = (processChain, func) => {
     // reusing processChain results in infinite recursion
