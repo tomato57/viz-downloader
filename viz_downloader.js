@@ -9,8 +9,8 @@ PREREQUISITES
 USAGE
 1. load the viz chapter and open developer console
 2. Run the following
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader/viz_downloader.js").then(function(module) {
-       downloadChapter()()
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.0.0/viz_downloader.js").then(function(module) {
+       module.downloadChapter()()
    })
 */
 
