@@ -14,7 +14,7 @@ USAGE
    })
 */
 
-let addFuncToProcessChain = (processChain, func) => {
+const addFuncToProcessChain = (processChain, func) => {
     // reusing processChain results in infinite recursion
     let newProcessChain = () => {
         return new Promise(
@@ -28,7 +28,7 @@ let addFuncToProcessChain = (processChain, func) => {
     }
     return newProcessChain
 }
-let addSleepToProcessChain = (processChain, ms) => {
+const addSleepToProcessChain = (processChain, ms) => {
     // reusing processChain results in infinite recursion
     let newprocessChain = () => {
         return new Promise(
@@ -41,7 +41,7 @@ let addSleepToProcessChain = (processChain, ms) => {
     }
     return newprocessChain
 }
-let buildProcessChain = (processList) => {
+const buildProcessChain = (processList) => {
     let processChain = () => {
         return new Promise((resolve) => { resolve(0) })
     }
@@ -51,13 +51,13 @@ let buildProcessChain = (processList) => {
     return processChain
 }
 
-let getCurrentPage = () => {
+const getCurrentPage = () => {
     return parseInt(document.getElementsByClassName("page_slider_label center")[0].textContent.match(/Pages?:\s(\d+)/)[1])
 }
-let getMaxPage = () => {
+const getMaxPage = () => {
     return parseInt(document.getElementsByClassName("page_slider_label left")[0].textContent.match(/Page\s(\d+)/)[1])
 }
-let goLeft = () => {
+const goLeft = () => {
     document.dispatchEvent(
         new KeyboardEvent("keydown", {
             "keyCode": 37,
@@ -65,7 +65,7 @@ let goLeft = () => {
         })
     )
 }
-let goRight = () => {
+const goRight = () => {
     document.dispatchEvent(
         new KeyboardEvent("keydown", {
             "keyCode": 39,
@@ -73,7 +73,7 @@ let goRight = () => {
         })
     )
 }
-let downloadCurrentPage = () => {
+const downloadCurrentPage = () => {
     let leftCanvas = document.getElementById("canvas_left_current")
     let rightCanvas = document.getElementById("canvas_right_current")
     // skip last pages with ads
@@ -93,7 +93,7 @@ let downloadCurrentPage = () => {
         link.click()
     }
 }
-let downloadChapter = () => {
+export const downloadChapter = () => {
     let processList = []
     let index = 0
     const currentPage = getCurrentPage()
