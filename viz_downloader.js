@@ -109,7 +109,7 @@ export const downloadChapter = () => {
     let movesLeft = maxPage / 2
     while (movesLeft-- > 0) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
-        processList[index++] = (processChain) => addSleepToProcessChain(processChain, 1000)
+        processList[index++] = (processChain) => addSleepToProcessChain(processChain, 2000)
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentPage)
     }
     return buildProcessChain(processList)
