@@ -9,8 +9,8 @@ PREREQUISITES
 USAGE
 1. load the viz chapter and open developer console
 2. Run the following
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.1.0/viz_downloader.js").then(function(module) {
-       module.downloadChapter(2000)()
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.2.0/viz_downloader.js").then(function(module) {
+       module.downloadChapter(2000, 500)()
    })
 */
 
@@ -93,7 +93,7 @@ const downloadCurrentPage = () => {
         link.click()
     }
 }
-export const downloadChapter = (timeoutMs) => {
+export const downloadChapter = (timeoutLeftMs, timeoutRightMs) => {
     let processList = []
     let index = 0
     const currentPage = getCurrentPage()
@@ -102,16 +102,16 @@ export const downloadChapter = (timeoutMs) => {
         let movesRight = currentPage / 2
         while (movesRight-- > 0) {
             processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
-            processList[index++] = (processChain) => addSleepToProcessChain(processChain, 300)
+            processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeoutRightMs)
         }
     }
     processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentPage)
     let movesLeft = maxPage / 2
     while (movesLeft-- > 0) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
-        processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeoutMs)
+        processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeoutLeftMs)
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentPage)
     }
     return buildProcessChain(processList)
 }
-// downloadChapter(2000)()
+// downloadChapter(2000, 500)()
