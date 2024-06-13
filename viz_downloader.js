@@ -9,7 +9,7 @@ PREREQUISITES
 USAGE
 1. load the viz chapter and open developer console
 2. Run the following
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.3.0/viz_downloader.js").then(function(module) {
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.4.0/viz_downloader.js").then(function(module) {
        module.downloadChapter(2000, 500)()
    })
 */
@@ -104,6 +104,7 @@ export const downloadChapter = (timeoutMsLeft, timeoutMsRight) => {
             processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeoutMsRight)
         }
     }
+    processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeoutMsLeft)
     processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentPage)
     let movesLeft = maxPage / 2
     while (movesLeft-- > 0) {
