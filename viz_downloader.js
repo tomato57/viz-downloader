@@ -1,15 +1,16 @@
 /*
 PREREQUISITES
-1. open chrome://settings/downloads
-   - change the download location
-   - disable "ask where to save each file before downloading"
-2. add below extn to overwrite preexisting file instead of adding unwanted suffix to filename
+1. Open chrome://settings/downloads
+   - Change download location if necessary
+   - Disable "ask where to save each file before downloading"
+2. Add below extension to chrome
    - https://chromewebstore.google.com/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp
+   - Downloading will overwrite preexisting file instead of adding suffix to filename
 
 USAGE
-1. load the viz chapter and open developer console
+1. Load the viz chapter and open developer console
 2. Run the following
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.6.0/viz_downloader.js").then(function(module) {
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.7.0/viz_downloader.js").then(function(module) {
        module.downloadChapter()()
    })
 */
@@ -76,7 +77,7 @@ export const goRight = () => {
         })
     )
 }
-export const downloadCurrentPage = () => {
+export const downloadCurrentImage = () => {
     let leftCanvas = document.getElementById("canvas_left_current")
     let rightCanvas = document.getElementById("canvas_right_current")
     let combined = document.createElement("canvas")
@@ -93,11 +94,13 @@ export const downloadCurrentPage = () => {
     link.setAttribute("href", image)
     link.click()
 }
-export const downloadInfoFile = () => {
+export const downloadChapterInfo = () => {
     const chapterNum = getChapterNum()
     const maxPage = getMaxPage()
+    const numImages = (maxPage / 2) + 1
     let info = {
-       "maxPage": maxPage,
+        "maxPage": maxPage,
+        "numImages": numImages,
     }
     const infoText = JSON.stringify(info)
     let link = document.createElement("a")
@@ -121,14 +124,14 @@ export const downloadChapter = ({
         }
     }
     processList[index++] = (processChain) => addSleepToProcessChain(processChain, goLeftTimeout)
-    processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentPage)
+    processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
     let movesLeft = maxPage / 2
     while (movesLeft-- > 0) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
         processList[index++] = (processChain) => addSleepToProcessChain(processChain, goLeftTimeout)
-        processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentPage)
+        processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
     }
-    processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadInfoFile)
+    processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadChapterInfo)
     return buildProcessChain(processList)
 }
 // downloadChapter()()
