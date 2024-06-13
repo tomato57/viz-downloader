@@ -9,8 +9,8 @@ PREREQUISITES
 USAGE
 1. load the viz chapter and open developer console
 2. Run the following
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.4.0/viz_downloader.js").then(function(module) {
-       module.downloadChapter(2000, 500)()
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.5.0/viz_downloader.js").then(function(module) {
+       module.downloadChapter()()
    })
 */
 
@@ -28,15 +28,15 @@ export const addFuncToProcessChain = (processChain, func) => {
     }
     return newProcessChain
 }
-export const addSleepToProcessChain = (processChain, timeoutMs) => {
+export const addSleepToProcessChain = (processChain, timeout) => {
     // reusing processChain results in infinite recursion
     let newprocessChain = () => {
         return new Promise(
             resolve => setTimeout(() => {
-                console.log(`waited ms: ${timeoutMs}`)
+                console.log(`waited ms: ${timeout}`)
                 processChain() // gets added to job queue
                 resolve(0)
-            }, timeoutMs)
+            }, timeout)
         )
     }
     return newprocessChain
@@ -92,7 +92,10 @@ export const downloadCurrentPage = () => {
         link.click()
     }
 }
-export const downloadChapter = (timeoutMsLeft, timeoutMsRight) => {
+export const downloadChapter = ({
+    goLeftTimeout = 3000,
+    goRightTimeout = 500,
+} = {}) => {
     let processList = []
     let index = 0
     const currentPage = getCurrentPage()
@@ -101,17 +104,17 @@ export const downloadChapter = (timeoutMsLeft, timeoutMsRight) => {
         let movesRight = currentPage / 2
         while (movesRight-- > 0) {
             processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
-            processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeoutMsRight)
+            processList[index++] = (processChain) => addSleepToProcessChain(processChain, goRightTimeout)
         }
     }
-    processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeoutMsLeft)
+    processList[index++] = (processChain) => addSleepToProcessChain(processChain, goLeftTimeout)
     processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentPage)
     let movesLeft = maxPage / 2
     while (movesLeft-- > 0) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
-        processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeoutMsLeft)
+        processList[index++] = (processChain) => addSleepToProcessChain(processChain, goLeftTimeout)
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentPage)
     }
     return buildProcessChain(processList)
 }
-// downloadChapter(2000, 500)()
+// downloadChapter()()
