@@ -10,7 +10,7 @@ PREREQUISITES
 USAGE
 1. Load the viz chapter and open developer console
 2. Run the following
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.7.0/viz_downloader.js").then(function(module) {
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.8.0/viz_downloader.js").then(function(module) {
        module.downloadChapter()()
    })
 */
@@ -58,8 +58,7 @@ export const getCurrentPage = () => {
     return parseInt(document.getElementsByClassName("page_slider_label center")[0].textContent.match(/Pages?:\s(\d+)/)[1])
 }
 export const getMaxPage = () => {
-    // skip ad pages
-    return parseInt(document.getElementsByClassName("page_slider_label left")[0].textContent.match(/Page\s(\d+)/)[1]) - 4
+    return parseInt(document.getElementsByClassName("page_slider_label left")[0].textContent.match(/Page\s(\d+)/)[1])
 }
 export const goLeft = () => {
     document.dispatchEvent(
@@ -97,7 +96,7 @@ export const downloadCurrentImage = () => {
 export const downloadChapterInfo = () => {
     const chapterNum = getChapterNum()
     const maxPage = getMaxPage()
-    const numImages = (maxPage / 2) + 1
+    const numImages = (maxPage / 2) - 1 // skip ad pages
     let info = {
         "maxPage": maxPage,
         "numImages": numImages,
@@ -109,26 +108,22 @@ export const downloadChapterInfo = () => {
     link.click()
 }
 export const downloadChapter = ({
-    goLeftTimeout = 3000,
-    goRightTimeout = 500,
+    longTimeout = 3000,
+    shortTimeout = 500,
 } = {}) => {
     let processList = []
     let index = 0
-    const currentPage = getCurrentPage()
     const maxPage = getMaxPage()
-    if (currentPage > 1) {
-        let movesRight = currentPage / 2
-        while (movesRight-- > 0) {
-            processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
-            processList[index++] = (processChain) => addSleepToProcessChain(processChain, goRightTimeout)
-        }
+    let movesRight = maxPage / 2
+    let movesLeft = (maxPage / 2) - 2 // skip ad pages
+    while (movesRight-- > 0) {
+        processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
+        processList[index++] = (processChain) => addSleepToProcessChain(processChain, shortTimeout)
     }
-    processList[index++] = (processChain) => addSleepToProcessChain(processChain, goLeftTimeout)
     processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
-    let movesLeft = maxPage / 2
     while (movesLeft-- > 0) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
-        processList[index++] = (processChain) => addSleepToProcessChain(processChain, goLeftTimeout)
+        processList[index++] = (processChain) => addSleepToProcessChain(processChain, longTimeout)
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
     }
     processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadChapterInfo)
