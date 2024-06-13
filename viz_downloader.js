@@ -10,7 +10,7 @@ PREREQUISITES
 USAGE
 1. Load the viz chapter and open developer console
 2. Run the following
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.8.0/viz_downloader.js").then(function(module) {
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.10.0/viz_downloader.js").then(function(module) {
        module.downloadChapter()()
    })
 */
@@ -54,10 +54,10 @@ export const buildProcessChain = (processList) => {
 export const getChapterNum = () => {
     return document.title.match(/Chapter\s(\d+)\sManga/)[1]
 }
-export const getCurrentPage = () => {
+export const getCurrentPageNum = () => {
     return parseInt(document.getElementsByClassName("page_slider_label center")[0].textContent.match(/Pages?:\s(\d+)/)[1])
 }
-export const getMaxPage = () => {
+export const getMaxPageNum = () => {
     return parseInt(document.getElementsByClassName("page_slider_label left")[0].textContent.match(/Page\s(\d+)/)[1])
 }
 export const goLeft = () => {
@@ -87,18 +87,18 @@ export const downloadCurrentImage = () => {
     context.drawImage(rightCanvas, leftCanvas.width, 0)
     let image = combined.toDataURL("image/png").replace("image/png", "image/octet-stream")
     const chapterNum = getChapterNum()
-    const currentPage = getCurrentPage()
+    const currentPageNum = getCurrentPageNum()
     let link = document.createElement("a")
-    link.setAttribute("download", `${chapterNum}_${currentPage}.png`)
+    link.setAttribute("download", `${chapterNum}_${currentPageNum}.png`)
     link.setAttribute("href", image)
     link.click()
 }
 export const downloadChapterInfo = () => {
     const chapterNum = getChapterNum()
-    const maxPage = getMaxPage()
-    const numImages = (maxPage / 2) - 1 // skip ad pages
+    const maxPageNum = getMaxPageNum()
+    const numImages = (maxPageNum / 2) - 1 // skip ad pages
     let info = {
-        "maxPage": maxPage,
+        "maxPageNum": maxPageNum,
         "numImages": numImages,
     }
     const infoText = JSON.stringify(info)
@@ -113,13 +113,14 @@ export const downloadChapter = ({
 } = {}) => {
     let processList = []
     let index = 0
-    const maxPage = getMaxPage()
-    let movesRight = maxPage / 2
-    let movesLeft = (maxPage / 2) - 2 // skip ad pages
+    const maxPageNum = getMaxPageNum()
+    let movesRight = maxPageNum / 2
+    let movesLeft = (maxPageNum / 2) - 2 // skip ad pages
     while (movesRight-- > 0) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
         processList[index++] = (processChain) => addSleepToProcessChain(processChain, shortTimeout)
     }
+    processList[index++] = (processChain) => addSleepToProcessChain(processChain, longTimeout)
     processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
     while (movesLeft-- > 0) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
