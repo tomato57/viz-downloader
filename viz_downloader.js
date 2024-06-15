@@ -10,7 +10,7 @@ PREREQUISITES
 USAGE
 1. Load the viz chapter and open developer console
 2. Run the following
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.20.0/viz_downloader.js").then(function(module) {
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.30.0/viz_downloader.js").then(function(module) {
        module.downloadChapter()()
    })
 */
@@ -81,7 +81,7 @@ export const downloadCurrentImage = () => {
     let rightCanvas = document.getElementById("canvas_right_current")
     let combined = document.createElement("canvas")
     combined.width = leftCanvas.width + rightCanvas.width
-    combined.height = leftCanvas.height
+    combined.height = Math.max(leftCanvas.height, rightCanvas.height)
     let context = combined.getContext("2d")
     context.drawImage(leftCanvas, 0, 0)
     context.drawImage(rightCanvas, leftCanvas.width, 0)
