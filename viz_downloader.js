@@ -10,7 +10,7 @@ PREREQUISITES
 USAGE
 1. Load the viz chapter and open developer console
 2. Run the following
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.40.0/viz_downloader.js").then(function(module) {
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.50.0/viz_downloader.js").then(function(module) {
        module.downloadChapter()()
    })
 */
@@ -109,7 +109,7 @@ export const downloadChapterInfo = () => {
 }
 export const downloadChapter = ({
     longTimeout = 3000,
-    shortTimeout = 500,
+    shortTimeout = 1000,
 } = {}) => {
     let processList = []
     let index = 0
