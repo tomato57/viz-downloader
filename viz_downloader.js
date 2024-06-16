@@ -10,7 +10,7 @@ PREREQUISITES
 USAGE
 1. Load the viz chapter and open developer console
 2. Run the following
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.50.0/viz_downloader.js").then(function(module) {
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v1.60.0/viz_downloader.js").then(function(module) {
        module.downloadChapter()()
    })
 */
@@ -117,13 +117,21 @@ export const downloadChapter = ({
     let movesRight = maxPageNum / 2
     let movesLeft = (maxPageNum / 2) - 2 // skip last 2 ad pages
     processList[index++] = (processChain) => addSleepToProcessChain(processChain, longTimeout*2)
-    while (movesRight-- > 0) {
+    for (let i = 0; i < movesRight; i++) {
+        processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
+        processList[index++] = (processChain) => addSleepToProcessChain(processChain, shortTimeout)
+    }
+    for (let i = 0; i < movesLeft; i++) {
+        processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
+        processList[index++] = (processChain) => addSleepToProcessChain(processChain, longTimeout)
+    }
+    for (let i = 0; i < movesRight; i++) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
         processList[index++] = (processChain) => addSleepToProcessChain(processChain, shortTimeout)
     }
     processList[index++] = (processChain) => addSleepToProcessChain(processChain, longTimeout)
     processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
-    while (movesLeft-- > 0) {
+    for (let i = 0; i < movesLeft; i++) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
         processList[index++] = (processChain) => addSleepToProcessChain(processChain, longTimeout)
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
