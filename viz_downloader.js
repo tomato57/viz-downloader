@@ -10,7 +10,7 @@ PREREQUISITES
 USAGE
 1. Load the viz chapter and open developer console
 2. Run the following code
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v2.0.0/viz_downloader.js").then(function(module) {
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v3.0.0/viz_downloader.js").then(function(module) {
        module.downloadChapter()()
    })
 */
@@ -77,6 +77,8 @@ export const goRight = () => {
     )
 }
 export const downloadCurrentImage = () => {
+    const chapterNum = getChapterNum()
+    const currentPageNum = getCurrentPageNum()
     let leftCanvas = document.getElementById("canvas_left_current")
     let rightCanvas = document.getElementById("canvas_right_current")
     let combined = document.createElement("canvas")
@@ -86,8 +88,6 @@ export const downloadCurrentImage = () => {
     context.drawImage(leftCanvas, 0, 0)
     context.drawImage(rightCanvas, leftCanvas.width, 0)
     let image = combined.toDataURL("image/png").replace("image/png", "image/octet-stream")
-    const chapterNum = getChapterNum()
-    const currentPageNum = getCurrentPageNum()
     let link = document.createElement("a")
     link.setAttribute("download", `${chapterNum}_${currentPageNum}.png`)
     link.setAttribute("href", image)
@@ -110,20 +110,23 @@ export const downloadChapterInfo = () => {
 export const downloadChapter = ({
     longTimeout = 3000,
     shortTimeout = 1000,
+    numPasses = 1,
 } = {}) => {
-    let processList = []
-    let index = 0
     const maxPageNum = getMaxPageNum()
     let movesRight = maxPageNum / 2
     let movesLeft = (maxPageNum / 2) - 2 // skip ad pages
+    let processList = []
+    let index = 0
     processList[index++] = (processChain) => addSleepToProcessChain(processChain, longTimeout*2)
-    for (let i = 0; i < movesRight; i++) {
-        processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
-        processList[index++] = (processChain) => addSleepToProcessChain(processChain, shortTimeout)
-    }
-    for (let i = 0; i < movesLeft; i++) {
-        processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
-        processList[index++] = (processChain) => addSleepToProcessChain(processChain, longTimeout)
+    for (let p = 0; p < numPasses; p++) {
+        for (let i = 0; i < movesRight; i++) {
+            processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
+            processList[index++] = (processChain) => addSleepToProcessChain(processChain, shortTimeout)
+        }
+        for (let i = 0; i < movesLeft; i++) {
+            processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
+            processList[index++] = (processChain) => addSleepToProcessChain(processChain, longTimeout)
+        }
     }
     for (let i = 0; i < movesRight; i++) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
