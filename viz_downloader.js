@@ -10,7 +10,7 @@ PREREQUISITES
 USAGE
 1. Load the viz chapter and open developer console
 2. Run the following code
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v4.0.0/viz_downloader.js").then(function(module) {
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v5.0.0/viz_downloader.js").then(function(module) {
        module.downloadChapter()()
    })
 */
@@ -108,7 +108,7 @@ export const downloadChapterInfo = () => {
     link.click()
 }
 export const downloadChapter = ({
-    numPasses = 2,
+    passes = 3,
     timeout = 2000,
 } = {}) => {
     const maxPageNum = getMaxPageNum()
@@ -116,22 +116,22 @@ export const downloadChapter = ({
     let processList = []
     let index = 0
     processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout*4)
-    for (let i = 0; i < moves + 2; i++) {
+    for (let m = 0; m < moves + 2; i++) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
         processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
     }
-    for (let p = 0; p < numPasses - 1; p++) {
-        for (let i = 0; i < moves; i++) {
+    for (let p = 0; p < passes - 1; p++) {
+        for (let m = 0; m < moves; i++) {
             processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
             processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
         }
-        for (let i = 0; i < moves; i++) {
+        for (let m = 0; m < moves; i++) {
             processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
             processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
         }
     }
     processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
-    for (let i = 0; i < moves; i++) {
+    for (let m = 0; m < moves; i++) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
         processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
