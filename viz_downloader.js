@@ -10,7 +10,7 @@ PREREQUISITES
 USAGE
 1. Load the viz chapter and open developer console
 2. Run the following code
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v3.2.0/viz_downloader.js").then(function(module) {
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v4.0.0/viz_downloader.js").then(function(module) {
        module.downloadChapter()()
    })
 */
@@ -108,31 +108,30 @@ export const downloadChapterInfo = () => {
     link.click()
 }
 export const downloadChapter = ({
-    numPasses = 3,
-    timeout = 1000,
+    numPasses = 2,
+    timeout = 2000,
 } = {}) => {
     const maxPageNum = getMaxPageNum()
-    let movesRight = maxPageNum / 2
-    let movesLeft = (maxPageNum / 2) - 2 // skip ad pages
+    let moves = (maxPageNum / 2) - 2 // skip ad pages
     let processList = []
     let index = 0
-    processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout*5)
-    for (let p = 0; p < numPasses - 1; p++) {
-        for (let i = 0; i < movesRight; i++) {
-            processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
-            processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
-        }
-        for (let i = 0; i < movesLeft; i++) {
-            processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
-            processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
-        }
-    }
-    for (let i = 0; i < movesRight; i++) {
+    processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout*4)
+    for (let i = 0; i < moves + 2; i++) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
         processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
     }
+    for (let p = 0; p < numPasses - 1; p++) {
+        for (let i = 0; i < moves; i++) {
+            processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
+            processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
+        }
+        for (let i = 0; i < moves; i++) {
+            processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
+            processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
+        }
+    }
     processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
-    for (let i = 0; i < movesLeft; i++) {
+    for (let i = 0; i < moves; i++) {
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
         processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
         processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
