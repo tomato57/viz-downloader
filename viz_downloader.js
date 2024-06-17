@@ -114,28 +114,28 @@ export const downloadChapter = ({
     const maxPageNum = getMaxPageNum()
     let moves = (maxPageNum / 2) - 2 // skip ad pages
     let processList = []
-    let processIndex = 0
-    processList[processIndex++] = (processChain) => addSleepToProcessChain(processChain, timeout*4)
+    let index = 0
+    processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout*4)
     for (let m = 0; m < moves + 2; m++) {
-        processList[processIndex++] = (processChain) => addFuncToProcessChain(processChain, goRight)
-        processList[processIndex++] = (processChain) => addSleepToProcessChain(processChain, timeout)
+        processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
+        processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
     }
     for (let p = 0; p < passes - 1; p++) {
         for (let m = 0; m < moves; m++) {
-            processList[processIndex++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
-            processList[processIndex++] = (processChain) => addSleepToProcessChain(processChain, timeout)
+            processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
+            processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
         }
         for (let m = 0; m < moves; m++) {
-            processList[processIndex++] = (processChain) => addFuncToProcessChain(processChain, goRight)
-            processList[processIndex++] = (processChain) => addSleepToProcessChain(processChain, timeout)
+            processList[index++] = (processChain) => addFuncToProcessChain(processChain, goRight)
+            processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
         }
     }
-    processList[processIndex++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
+    processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
     for (let m = 0; m < moves; m++) {
-        processList[processIndex++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
-        processList[processIndex++] = (processChain) => addSleepToProcessChain(processChain, timeout)
-        processList[processIndex++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
+        processList[index++] = (processChain) => addFuncToProcessChain(processChain, goLeft)
+        processList[index++] = (processChain) => addSleepToProcessChain(processChain, timeout)
+        processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadCurrentImage)
     }
-    processList[processIndex++] = (processChain) => addFuncToProcessChain(processChain, downloadChapterInfo)
+    processList[index++] = (processChain) => addFuncToProcessChain(processChain, downloadChapterInfo)
     return buildProcessChain(processList)
 }
