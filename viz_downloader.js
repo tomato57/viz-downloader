@@ -1,18 +1,20 @@
 /*
 PREREQUISITES
-1. Open chrome://settings/downloads
-   - Change download location if necessary
-   - Disable "ask where to save each file before downloading"
-2. Add below extension to chrome
+1. Change download location if necessary (chrome://settings/downloads)
+2. Disable "ask where to save each file before downloading" / "always ask you where to save files"
+3. Add below extension if using chrome
    - https://chromewebstore.google.com/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp
    - Downloading will overwrite preexisting file instead of adding suffix to filename
 
 USAGE
 1. Load the viz chapter and open developer console
 2. Run the following code
-   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v6.0.0/viz_downloader.js").then(function(module) {
+   import("https://cdn.jsdelivr.net/gh/tomato57/viz-downloader@v6.2.0/viz_downloader.js").then(function(module) {
        module.downloadChapter()()
    })
+
+NOTES
+- Works in chrome version 126.0.6478.127 and firefox version 127.0.2
 */
 
 export const addFuncToProcessChain = (processChain, func) => {
@@ -64,6 +66,7 @@ export const goLeft = () => {
     document.dispatchEvent(
         new KeyboardEvent("keydown", {
             "keyCode": 37,
+            "which": 37,
             "view": window,
         })
     )
@@ -72,6 +75,7 @@ export const goRight = () => {
     document.dispatchEvent(
         new KeyboardEvent("keydown", {
             "keyCode": 39,
+            "which": 39,
             "view": window,
         })
     )
